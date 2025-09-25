@@ -1,21 +1,4 @@
 <!DOCTYPE html>
-<html>
-
-<html>
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>JSFiddle Lpu42js8</title>
-
-  <style>
-    
-  </style>
-
-  
-</head>
-<body>
-  <!DOCTYPE html>
-
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -37,795 +20,854 @@
             <div class="max-w-md mx-auto">
                 <h1 class="text-2xl font-bold text-center mb-4">Habit Tracker</h1>
 
-```
-            <!-- Date Navigation -->
-            <div class="flex items-center justify-between mb-4">
-                <button onclick="goToPreviousDay()" class="p-2 rounded-full bg-gray-700 hover:bg-gray-600">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <polyline points="15,18 9,12 15,6"></polyline>
-                    </svg>
-                </button>
-                
-                <div class="text-center">
-                    <div id="current-date" class="text-lg font-semibold"></div>
-                    <div id="current-full-date" class="text-sm text-gray-400"></div>
-                </div>
-                
-                <button onclick="goToNextDay()" class="p-2 rounded-full bg-gray-700 hover:bg-gray-600">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <polyline points="9,18 15,12 9,6"></polyline>
-                    </svg>
-                </button>
-            </div>
-            
-            <!-- Today Button -->
-            <button id="today-btn" onclick="goToToday()" class="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 rounded-lg text-sm font-medium hidden">
-                Go to Today
-            </button>
-        </div>
-    </div>
-
-    <!-- Tab Navigation -->
-    <div class="bg-gray-800 border-t border-gray-700">
-        <div class="max-w-md mx-auto flex">
-            <button onclick="setActiveTab('habits')" id="habits-tab" class="flex-1 py-3 px-4 text-center font-medium bg-blue-600 text-white">
-                Habits (<span id="habits-count">0</span>)
-            </button>
-            <button onclick="setActiveTab('tasks')" id="tasks-tab" class="flex-1 py-3 px-4 text-center font-medium text-gray-400 hover:text-white hover:bg-gray-700">
-                Tasks (<span id="tasks-count">0</span>)
-            </button>
-        </div>
-    </div>
-
-    <!-- Content -->
-    <div class="max-w-md mx-auto p-4">
-        <!-- Progress Bar -->
-        <div class="mb-6">
-            <div class="flex justify-between text-sm mb-2">
-                <span>Progress</span>
-                <span id="progress-percent">0%</span>
-            </div>
-            <div class="w-full bg-gray-700 rounded-full h-2">
-                <div id="progress-bar" class="bg-green-500 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
-            </div>
-        </div>
-
-        <!-- Habits Content -->
-        <div id="habits-content">
-            <div id="habits-list" class="space-y-3"></div>
-            <div id="no-habits" class="text-center text-gray-400 py-8 hidden">
-                <div class="text-lg mb-2">No habits scheduled for <span id="no-habits-date"></span></div>
-                <div class="text-sm">Add some habits to get started!</div>
-            </div>
-        </div>
-
-        <!-- Tasks Content -->
-        <div id="tasks-content" class="hidden">
-            <div id="tasks-list" class="space-y-3"></div>
-            <div id="no-tasks" class="text-center text-gray-400 py-8 hidden">
-                <div class="text-lg mb-2">No tasks yet</div>
-                <div class="text-sm">Add some tasks to stay organized!</div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Add Button -->
-    <button onclick="showAddForm()" class="fixed bottom-6 right-6 w-14 h-14 bg-blue-600 hover:bg-blue-700 rounded-full flex items-center justify-center shadow-lg">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <line x1="12" y1="5" x2="12" y2="19"></line>
-            <line x1="5" y1="12" x2="19" y2="12"></line>
-        </svg>
-    </button>
-</div>
-
-<!-- Add Form Modal -->
-<div id="add-form-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
-    <div class="bg-gray-800 rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
-        <div class="p-6">
-            <div class="flex justify-between items-center mb-4">
-                <h2 id="form-title" class="text-xl font-bold">Add Habit</h2>
-                <button onclick="closeAddForm()" class="p-1 hover:bg-gray-700 rounded">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="18" y1="6" x2="6" y2="18"></line>
-                        <line x1="6" y1="6" x2="18" y2="18"></line>
-                    </svg>
-                </button>
-            </div>
-
-            <!-- Name -->
-            <div class="mb-4">
-                <label class="block text-sm font-medium mb-2">Name</label>
-                <input type="text" id="form-name" class="w-full p-2 rounded bg-gray-700 border border-gray-600 focus:border-blue-500 focus:outline-none" placeholder="Enter name...">
-            </div>
-
-            <!-- Note -->
-            <div class="mb-4">
-                <label class="block text-sm font-medium mb-2">Note (optional)</label>
-                <textarea id="form-note" class="w-full p-2 rounded bg-gray-700 border border-gray-600 focus:border-blue-500 focus:outline-none" rows="2" placeholder="Add a note..."></textarea>
-            </div>
-
-            <!-- Habit-specific fields -->
-            <div id="habit-fields">
-                <!-- Days -->
-                <div class="mb-4">
-                    <label class="block text-sm font-medium mb-2">Days</label>
-                    <div class="grid grid-cols-2 gap-2" id="days-checkboxes">
-                        <!-- Will be populated by JavaScript -->
-                    </div>
-                </div>
-
-                <!-- Time of Day -->
-                <div class="mb-4">
-                    <label class="block text-sm font-medium mb-2">Time of Day</label>
-                    <select id="form-time" class="w-full p-2 rounded bg-gray-700 border border-gray-600 focus:border-blue-500 focus:outline-none">
-                        <option value="1">Morning</option>
-                        <option value="2">Noon</option>
-                        <option value="3">Evening</option>
-                    </select>
-                </div>
-
-                <!-- Amount Based -->
-                <div class="mb-4">
-                    <label class="flex items-center">
-                        <input type="checkbox" id="form-amount-based" class="mr-2">
-                        <span class="text-sm">Multiple times per day</span>
-                    </label>
-                </div>
-
-                <!-- Daily Target -->
-                <div id="daily-target-field" class="mb-4 hidden">
-                    <label class="block text-sm font-medium mb-2">Times per day</label>
-                    <input type="number" id="form-daily-target" min="1" max="20" value="1" class="w-full p-2 rounded bg-gray-700 border border-gray-600 focus:border-blue-500 focus:outline-none">
-                </div>
-            </div>
-
-            <!-- Task-specific fields -->
-            <div id="task-fields" class="hidden">
-                <div class="mb-4">
-                    <label class="block text-sm font-medium mb-2">Urgency</label>
-                    <select id="form-urgency" class="w-full p-2 rounded bg-gray-700 border border-gray-600 focus:border-blue-500 focus:outline-none">
-                        <option value="high">Today</option>
-                        <option value="medium">This Week</option>
-                        <option value="low">Someday</option>
-                    </select>
-                </div>
-            </div>
-
-            <!-- Subtasks -->
-            <div class="mb-4">
-                <label class="block text-sm font-medium mb-2">Subtasks</label>
-                <div class="flex gap-2 mb-2">
-                    <input type="text" id="new-subtask" placeholder="Add subtask..." class="flex-1 p-2 rounded bg-gray-700 border border-gray-600 focus:border-blue-500 focus:outline-none">
-                    <button onclick="addSubtask()" class="px-3 py-2 bg-blue-600 hover:bg-blue-700 rounded">Add</button>
-                </div>
-                <div id="subtasks-list" class="space-y-1"></div>
-            </div>
-
-            <!-- Submit -->
-            <div class="flex gap-3">
-                <button onclick="closeAddForm()" class="flex-1 py-2 px-4 bg-gray-600 hover:bg-gray-700 rounded font-medium">Cancel</button>
-                <button onclick="submitForm()" id="submit-btn" class="flex-1 py-2 px-4 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed rounded font-medium">Add Habit</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<script>
-    // Global state
-    let currentDate = new Date();
-    let viewingDate = new Date();
-    let habits = [];
-    let tasks = [];
-    let activeTab = 'habits';
-    let formSubtasks = [];
-
-    // Utility functions
-    const formatDate = (date) => {
-        return date.toISOString().split('T')[0];
-    };
-
-    const parseDate = (dateString) => {
-        return new Date(dateString + 'T00:00:00');
-    };
-
-    const getWeekday = (date) => {
-        return date.toLocaleDateString('en-US', { weekday: 'long' });
-    };
-
-    const addDays = (date, days) => {
-        const result = new Date(date);
-        result.setDate(result.getDate() + days);
-        return result;
-    };
-
-    const formatDisplayDate = (date) => {
-        const today = new Date();
-        const diffDays = Math.round((date - today) / (1000 * 60 * 60 * 24));
-
-        if (diffDays === 0) return 'Today';
-        if (diffDays === -1) return 'Yesterday';
-        if (diffDays === 1) return 'Tomorrow';
-
-        return date.toLocaleDateString('en-US', { 
-            weekday: 'long', 
-            month: 'short', 
-            day: 'numeric' 
-        });
-    };
-
-    const createHabit = (name, days, timeOfDay, options = {}) => ({
-        id: Date.now() + Math.random(),
-        name,
-        days,
-        timeOfDay,
-        isAmountBased: options.isAmountBased || false,
-        dailyTarget: options.dailyTarget || 1,
-        subtasks: options.subtasks || [],
-        note: options.note || '',
-        completions: {},
-        createdDate: formatDate(new Date())
-    });
-
-    const createTask = (name, urgency = 'medium', options = {}) => ({
-        id: Date.now() + Math.random(),
-        name,
-        urgency,
-        note: options.note || '',
-        subtasks: options.subtasks || [],
-        isCompleted: false,
-        createdDate: formatDate(new Date())
-    });
-
-    const createSubtask = (name) => ({
-        id: Date.now() + Math.random(),
-        name,
-        isCompleted: false
-    });
-
-    // Load data from localStorage
-    const loadData = () => {
-        const savedHabits = localStorage.getItem('habits');
-        const savedTasks = localStorage.getItem('tasks');
-
-        if (savedHabits) {
-            habits = JSON.parse(savedHabits);
-        }
-        if (savedTasks) {
-            tasks = JSON.parse(savedTasks);
-        }
-    };
-
-    // Save data to localStorage
-    const saveData = () => {
-        localStorage.setItem('habits', JSON.stringify(habits));
-        localStorage.setItem('tasks', JSON.stringify(tasks));
-    };
-
-    // Date navigation
-    const goToPreviousDay = () => {
-        viewingDate = addDays(viewingDate, -1);
-        updateDisplay();
-    };
-
-    const goToNextDay = () => {
-        viewingDate = addDays(viewingDate, 1);
-        updateDisplay();
-    };
-
-    const goToToday = () => {
-        viewingDate = new Date();
-        updateDisplay();
-    };
-
-    // Tab management
-    const setActiveTab = (tab) => {
-        activeTab = tab;
-        
-        // Update tab styling
-        document.getElementById('habits-tab').className = `flex-1 py-3 px-4 text-center font-medium ${
-            tab === 'habits' ? 'bg-blue-600 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'
-        }`;
-        document.getElementById('tasks-tab').className = `flex-1 py-3 px-4 text-center font-medium ${
-            tab === 'tasks' ? 'bg-blue-600 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'
-        }`;
-
-        // Show/hide content
-        document.getElementById('habits-content').style.display = tab === 'habits' ? 'block' : 'none';
-        document.getElementById('tasks-content').style.display = tab === 'tasks' ? 'block' : 'none';
-
-        updateDisplay();
-    };
-
-    // Get today's habits
-    const getTodaysHabits = () => {
-        return habits.filter(habit => 
-            habit.days.includes(getWeekday(viewingDate))
-        );
-    };
-
-    // Check if habit is completed
-    const isHabitCompleted = (habit) => {
-        const dateKey = formatDate(viewingDate);
-        const completion = habit.completions[dateKey];
-
-        if (!completion) return false;
-        if (!completion.completed) return false;
-
-        if (habit.subtasks.length > 0) {
-            const allSubtasksComplete = habit.subtasks.every(subtask => {
-                return completion.subtasks?.[subtask.id]?.[habit.timeOfDay] === true;
-            });
-            if (!allSubtasksComplete) return false;
-        }
-
-        if (habit.isAmountBased) {
-            return (completion.progress?.[habit.timeOfDay] || 0) >= habit.dailyTarget;
-        }
-
-        return true;
-    };
-
-    // Toggle habit completion
-    const toggleHabit = (habitId, timeOfDay = null) => {
-        const habit = habits.find(h => h.id === habitId);
-        if (!habit) return;
-
-        const dateKey = formatDate(viewingDate);
-        const currentCompletion = habit.completions[dateKey] || {
-            completed: false,
-            progress: {},
-            subtasks: {}
-        };
-
-        const targetTime = timeOfDay || habit.timeOfDay;
-
-        if (habit.isAmountBased) {
-            const currentProgress = currentCompletion.progress[targetTime] || 0;
-            const newProgress = currentProgress < habit.dailyTarget ? currentProgress + 1 : 0;
-
-            habit.completions[dateKey] = {
-                ...currentCompletion,
-                progress: { ...currentCompletion.progress, [targetTime]: newProgress },
-                completed: newProgress >= habit.dailyTarget
-            };
-        } else {
-            habit.completions[dateKey] = {
-                ...currentCompletion,
-                completed: !currentCompletion.completed
-            };
-        }
-
-        saveData();
-        updateDisplay();
-    };
-
-    // Toggle subtask completion
-    const toggleSubtask = (habitId, subtaskId, timeOfDay = null) => {
-        const habit = habits.find(h => h.id === habitId);
-        if (!habit) return;
-
-        const dateKey = formatDate(viewingDate);
-        const currentCompletion = habit.completions[dateKey] || {
-            completed: false,
-            progress: {},
-            subtasks: {}
-        };
-
-        const targetTime = timeOfDay || habit.timeOfDay;
-
-        const newSubtasks = {
-            ...currentCompletion.subtasks,
-            [subtaskId]: {
-                ...currentCompletion.subtasks[subtaskId],
-                [targetTime]: !(currentCompletion.subtasks[subtaskId]?.[targetTime])
-            }
-        };
-
-        habit.completions[dateKey] = {
-            ...currentCompletion,
-            subtasks: newSubtasks
-        };
-
-        saveData();
-        updateDisplay();
-    };
-
-    // Toggle task completion
-    const toggleTask = (taskId) => {
-        const task = tasks.find(t => t.id === taskId);
-        if (!task) return;
-
-        task.isCompleted = !task.isCompleted;
-        saveData();
-        updateDisplay();
-    };
-
-    // Toggle task subtask
-    const toggleTaskSubtask = (taskId, subtaskId) => {
-        const task = tasks.find(t => t.id === taskId);
-        if (!task) return;
-
-        const subtask = task.subtasks.find(s => s.id === subtaskId);
-        if (!subtask) return;
-
-        subtask.isCompleted = !subtask.isCompleted;
-        saveData();
-        updateDisplay();
-    };
-
-    // Calculate streak
-    const calculateStreak = (habit) => {
-        let streak = 0;
-        let checkDate = new Date(viewingDate);
-
-        while (true) {
-            const weekday = getWeekday(checkDate);
-            if (habit.days.includes(weekday)) {
-                const dateKey = formatDate(checkDate);
-                const completion = habit.completions[dateKey];
-
-                if (completion && completion.completed) {
-                    streak++;
-                    checkDate = addDays(checkDate, -1);
-                } else {
-                    break;
-                }
-            } else {
-                checkDate = addDays(checkDate, -1);
-            }
-        }
-
-        return streak;
-    };
-
-    // Get completion rates
-    const getCompletionRate = () => {
-        const todaysHabits = getTodaysHabits();
-        if (todaysHabits.length === 0) return 0;
-        const completed = todaysHabits.filter(isHabitCompleted).length;
-        return Math.round((completed / todaysHabits.length) * 100);
-    };
-
-    const getTaskCompletionRate = () => {
-        if (tasks.length === 0) return 0;
-        const completed = tasks.filter(task => task.isCompleted).length;
-        return Math.round((completed / tasks.length) * 100);
-    };
-
-    // Render functions
-    const renderHabits = () => {
-        const todaysHabits = getTodaysHabits();
-        const habitsList = document.getElementById('habits-list');
-        const noHabits = document.getElementById('no-habits');
-
-        if (todaysHabits.length === 0) {
-            habitsList.innerHTML = '';
-            noHabits.classList.remove('hidden');
-            document.getElementById('no-habits-date').textContent = formatDisplayDate(viewingDate);
-        } else {
-            noHabits.classList.add('hidden');
-            habitsList.innerHTML = todaysHabits.map(habit => renderHabitCard(habit)).join('');
-        }
-
-        document.getElementById('habits-count').textContent = todaysHabits.length;
-    };
-
-    const renderHabitCard = (habit) => {
-        const isCompleted = isHabitCompleted(habit);
-        const streak = calculateStreak(habit);
-        const dateKey = formatDate(viewingDate);
-        const completion = habit.completions[dateKey] || { progress: {}, subtasks: {} };
-
-        const getTimeIcon = (timeOfDay) => {
-            switch(timeOfDay) {
-                case 1: return '☀️';
-                case 2: return '🕐';
-                case 3: return '🌙';
-                default: return '🕐';
-            }
-        };
-
-        const getTimeLabel = (timeOfDay) => {
-            switch(timeOfDay) {
-                case 1: return 'Morning';
-                case 2: return 'Noon';
-                case 3: return 'Evening';
-                default: return 'Anytime';
-            }
-        };
-
-        return `
-            <div class="p-4 rounded-lg border ${isCompleted ? 'bg-green-900 border-green-600' : 'bg-gray-800 border-gray-600'}">
-                <div class="flex items-start justify-between mb-2">
-                    <div class="flex-1">
-                        <h3 class="font-semibold text-lg">${habit.name}</h3>
-                        ${habit.note ? `<p class="text-sm text-gray-400 mt-1">${habit.note}</p>` : ''}
-                    </div>
-                    ${streak > 0 ? `<div class="text-xs bg-orange-600 text-white px-2 py-1 rounded-full">🔥 ${streak}</div>` : ''}
-                </div>
-
-                <div class="flex items-center gap-4 mb-3 text-sm text-gray-300">
-                    <div class="flex items-center gap-2">
-                        <span>${getTimeIcon(habit.timeOfDay)}</span>
-                        <span>${getTimeLabel(habit.timeOfDay)}</span>
-                        ${habit.isAmountBased ? `<span>${habit.dailyTarget}x</span>` : ''}
-                    </div>
-                </div>
-
-                ${habit.isAmountBased ? `
-                    <div class="flex items-center justify-between mb-3">
-                        <span class="text-sm">Progress</span>
-                        <div class="flex items-center gap-2">
-                            <span class="text-sm">${completion.progress[habit.timeOfDay] || 0}/${habit.dailyTarget}</span>
-                            <button onclick="toggleHabit(${habit.id})" class="w-8 h-8 rounded-full bg-blue-600 hover:bg-blue-700 flex items-center justify-center text-xs font-bold">+</button>
-                        </div>
-                    </div>
-                ` : `
-                    <button onclick="toggleHabit(${habit.id})" class="w-full py-2 px-4 rounded-lg flex items-center justify-center gap-2 font-medium ${isCompleted ? 'bg-green-600 hover:bg-green-700' : 'bg-gray-700 hover:bg-gray-600'}">
-                        ${isCompleted ? '✓ Completed' : 'Mark Complete'}
+                <!-- Date Navigation -->
+                <div class="flex items-center justify-between mb-4">
+                    <button onclick="goToPreviousDay()" class="p-2 rounded-full bg-gray-700 hover:bg-gray-600">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="15,18 9,12 15,6"></polyline>
+                        </svg>
                     </button>
-                `}
-
-                ${habit.subtasks.length > 0 ? `
-                    <div class="mt-3 pt-3 border-t border-gray-600">
-                        <div class="text-xs text-gray-400 mb-2">Subtasks:</div>
-                        <div class="space-y-2">
-                            ${habit.subtasks.map(subtask => `
-                                <div class="flex items-center gap-2">
-                                    <button onclick="toggleSubtask(${habit.id}, ${subtask.id}, ${habit.timeOfDay})" class="w-4 h-4 rounded border-2 flex items-center justify-center ${completion.subtasks[subtask.id]?.[habit.timeOfDay] ? 'bg-green-600 border-green-600' : 'border-gray-400'}">
-                                        ${completion.subtasks[subtask.id]?.[habit.timeOfDay] ? '✓' : ''}
-                                    </button>
-                                    <span class="text-sm ${completion.subtasks[subtask.id]?.[habit.timeOfDay] ? 'line-through text-gray-400' : ''}">${subtask.name}</span>
-                                </div>
-                            `).join('')}
-                        </div>
+                    
+                    <div class="text-center">
+                        <div id="current-date" class="text-lg font-semibold"></div>
+                        <div id="current-full-date" class="text-sm text-gray-400"></div>
                     </div>
-                ` : ''}
-            </div>
-        `;
-    };
-
-    const renderTasks = () => {
-        const tasksList = document.getElementById('tasks-list');
-        const noTasks = document.getElementById('no-tasks');
-
-        if (tasks.length === 0) {
-            tasksList.innerHTML = '';
-            noTasks.classList.remove('hidden');
-        } else {
-            noTasks.classList.add('hidden');
-            const sortedTasks = [...tasks].sort((a, b) => {
-                if (a.isCompleted !== b.isCompleted) {
-                    return a.isCompleted ? 1 : -1;
-                }
-                const urgencyOrder = { high: 0, medium: 1, low: 2 };
-                return urgencyOrder[a.urgency] - urgencyOrder[b.urgency];
-            });
-            tasksList.innerHTML = sortedTasks.map(task => renderTaskCard(task)).join('');
-        }
-
-        document.getElementById('tasks-count').textContent = tasks.length;
-    };
-
-    const renderTaskCard = (task) => {
-        const urgencyColors = {
-            high: 'border-red-500 bg-red-900',
-            medium: 'border-yellow-500 bg-yellow-900',
-            low: 'border-blue-500 bg-blue-900'
-        };
-
-        const urgencyLabels = {
-            high: 'Today',
-            medium: 'This Week',
-            low: 'Someday'
-        };
-
-        const allSubtasksComplete = task.subtasks.length === 0 || task.subtasks.every(s => s.isCompleted);
-
-        return `
-            <div class="p-4 rounded-lg border ${task.isCompleted ? 'bg-green-900 border-green-600' : urgencyColors[task.urgency]}">
-                <div class="flex items-start justify-between mb-2">
-                    <div class="flex-1">
-                        <h3 class="font-semibold text-lg">${task.name}</h3>
-                        ${task.note ? `<p class="text-sm text-gray-400 mt-1">${task.note}</p>` : ''}
-                    </div>
-                    <div class="text-xs bg-gray-600 text-white px-2 py-1 rounded-full">${urgencyLabels[task.urgency]}</div>
+                    
+                    <button onclick="goToNextDay()" class="p-2 rounded-full bg-gray-700 hover:bg-gray-600">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="9,18 15,12 9,6"></polyline>
+                        </svg>
+                    </button>
                 </div>
-
-                ${task.subtasks.length > 0 ? `
-                    <div class="mb-3">
-                        <div class="text-xs text-gray-400 mb-2">Subtasks (${task.subtasks.filter(s => s.isCompleted).length}/${task.subtasks.length}):</div>
-                        <div class="space-y-2">
-                            ${task.subtasks.map(subtask => `
-                                <div class="flex items-center gap-2">
-                                    <button onclick="toggleTaskSubtask(${task.id}, ${subtask.id})" class="w-4 h-4 rounded border-2 flex items-center justify-center ${subtask.isCompleted ? 'bg-green-600 border-green-600' : 'border-gray-400'}">
-                                        ${subtask.isCompleted ? '✓' : ''}
-                                    </button>
-                                    <span class="text-sm ${subtask.isCompleted ? 'line-through text-gray-400' : ''}">${subtask.name}</span>
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-                ` : ''}
-
-                <button onclick="toggleTask(${task.id})" ${!allSubtasksComplete ? 'disabled' : ''} class="w-full py-2 px-4 rounded-lg flex items-center justify-center gap-2 font-medium ${task.isCompleted ? 'bg-green-600 hover:bg-green-700' : !allSubtasksComplete ? 'bg-gray-600 cursor-not-allowed' : 'bg-gray-700 hover:bg-gray-600'}">
-                    ${task.isCompleted ? '✓ Completed' : !allSubtasksComplete ? 'Complete Subtasks First' : 'Mark Complete'}
+                
+                <!-- Today Button -->
+                <button id="today-btn" onclick="goToToday()" class="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 rounded-lg text-sm font-medium hidden">
+                    Go to Today
                 </button>
             </div>
-        `;
-    };
+        </div>
 
-    // Form management
-    const showAddForm = () => {
-        document.getElementById('add-form-modal').classList.remove('hidden');
-        document.getElementById('form-title').textContent = `Add ${activeTab === 'habits' ? 'Habit' : 'Task'}`;
-        document.getElementById('submit-btn').textContent = `Add ${activeTab === 'habits' ? 'Habit' : 'Task'}`;
-        
-        if (activeTab === 'habits') {
-            document.getElementById('habit-fields').style.display = 'block';
-            document.getElementById('task-fields').style.display = 'none';
-        } else {
-            document.getElementById('habit-fields').style.display = 'none';
-            document.getElementById('task-fields').style.display = 'block';
-        }
-
-        // Initialize days checkboxes
-        const daysContainer = document.getElementById('days-checkboxes');
-        const weekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-        daysContainer.innerHTML = weekdays.map(day => `
-            <label class="flex items-center">
-                <input type="checkbox" class="mr-2" data-day="${day}">
-                <span class="text-sm">${day}</span>
-            </label>
-        `).join('');
-
-        // Reset form
-        resetForm();
-    };
-
-    const closeAddForm = () => {
-        document.getElementById('add-form-modal').classList.add('hidden');
-        resetForm();
-    };
-
-    const resetForm = () => {
-        document.getElementById('form-name').value = '';
-        document.getElementById('form-note').value = '';
-        document.getElementById('form-time').value = '1';
-        document.getElementById('form-amount-based').checked = false;
-        document.getElementById('form-daily-target').value = '1';
-        document.getElementById('form-urgency').value = 'medium';
-        document.getElementById('new-subtask').value = '';
-        document.getElementById('daily-target-field').classList.add('hidden');
-        
-        // Clear day checkboxes
-        document.querySelectorAll('#days-checkboxes input[type="checkbox"]').forEach(cb => cb.checked = false);
-        
-        formSubtasks = [];
-        renderFormSubtasks();
-    };
-
-    const addSubtask = () => {
-        const input = document.getElementById('new-subtask');
-        const name = input.value.trim();
-        if (name) {
-            formSubtasks.push(createSubtask(name));
-            input.value = '';
-            renderFormSubtasks();
-        }
-    };
-
-    const removeFormSubtask = (index) => {
-        formSubtasks.splice(index, 1);
-        renderFormSubtasks();
-    };
-
-    const renderFormSubtasks = () => {
-        const container = document.getElementById('subtasks-list');
-        container.innerHTML = formSubtasks.map((subtask, index) => `
-            <div class="flex items-center justify-between bg-gray-700 p-2 rounded">
-                <span class="text-sm">${subtask.name}</span>
-                <button onclick="removeFormSubtask(${index})" class="text-red-400 hover:text-red-300">✕</button>
+        <!-- Tab Navigation -->
+        <div class="bg-gray-800 border-t border-gray-700">
+            <div class="max-w-md mx-auto flex">
+                <button onclick="setActiveTab('habits')" id="habits-tab" class="flex-1 py-3 px-4 text-center font-medium bg-blue-600 text-white">
+                    Habits (<span id="habits-count">0</span>)
+                </button>
+                <button onclick="setActiveTab('tasks')" id="tasks-tab" class="flex-1 py-3 px-4 text-center font-medium text-gray-400 hover:text-white hover:bg-gray-700">
+                    Tasks (<span id="tasks-count">0</span>)
+                </button>
             </div>
-        `).join('');
-    };
+        </div>
 
-    const submitForm = () => {
-        const name = document.getElementById('form-name').value.trim();
-        if (!name) return;
+        <!-- Content -->
+        <div class="max-w-md mx-auto p-4">
+            <!-- Progress Bar -->
+            <div class="mb-6">
+                <div class="flex justify-between text-sm mb-2">
+                    <span>Progress</span>
+                    <span id="progress-percent">0%</span>
+                </div>
+                <div class="w-full bg-gray-700 rounded-full h-2">
+                    <div id="progress-bar" class="bg-green-500 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+                </div>
+            </div>
 
-        if (activeTab === 'habits') {
-            const selectedDays = Array.from(document.querySelectorAll('#days-checkboxes input[type="checkbox"]:checked')).map(cb => cb.dataset.day);
-            if (selectedDays.length === 0) return;
+            <!-- Habits Content -->
+            <div id="habits-content">
+                <div id="habits-list" class="space-y-3"></div>
+                <div id="no-habits" class="text-center text-gray-400 py-8 hidden">
+                    <div class="text-lg mb-2">No habits scheduled for <span id="no-habits-date"></span></div>
+                    <div class="text-sm">Add some habits to get started!</div>
+                </div>
+            </div>
 
-            const habit = createHabit(
-                name,
-                selectedDays,
-                parseInt(document.getElementById('form-time').value),
-                {
-                    isAmountBased: document.getElementById('form-amount-based').checked,
-                    dailyTarget: parseInt(document.getElementById('form-daily-target').value),
-                    subtasks: [...formSubtasks],
-                    note: document.getElementById('form-note').value.trim()
-                }
-            );
-            habits.push(habit);
-        } else {
-            const task = createTask(
-                name,
-                document.getElementById('form-urgency').value,
-                {
-                    note: document.getElementById('form-note').value.trim(),
-                    subtasks: [...formSubtasks]
-                }
-            );
-            tasks.push(task);
-        }
+            <!-- Tasks Content -->
+            <div id="tasks-content" class="hidden">
+                <div id="tasks-list" class="space-y-3"></div>
+                <div id="no-tasks" class="text-center text-gray-400 py-8 hidden">
+                    <div class="text-lg mb-2">No tasks yet</div>
+                    <div class="text-sm">Add some tasks to stay organized!</div>
+                </div>
+            </div>
+        </div>
 
-        saveData();
-        closeAddForm();
-        updateDisplay();
-    };
+        <!-- Reset Button -->
+        <button onclick="showResetConfirm()" class="fixed bottom-24 right-6 w-12 h-12 bg-red-600 hover:bg-red-700 rounded-full flex items-center justify-center shadow-lg">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 6h18l-2 13H5L3 6z"></path>
+                <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+            </svg>
+        </button>
 
-    // Main update function
-    const updateDisplay = () => {
-        // Update date display
-        document.getElementById('current-date').textContent = formatDisplayDate(viewingDate);
-        document.getElementById('current-full-date').textContent = viewingDate.toLocaleDateString('en-US', { 
-            month: 'long', 
-            day: 'numeric', 
-            year: 'numeric' 
+        <!-- Add Button -->
+        <button onclick="showAddForm()" class="fixed bottom-6 right-6 w-14 h-14 bg-blue-600 hover:bg-blue-700 rounded-full flex items-center justify-center shadow-lg">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+        </button>
+    </div>
+
+    <!-- Add Form Modal -->
+    <div id="add-form-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-gray-800 rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 id="form-title" class="text-xl font-bold">Add Habit</h2>
+                    <button onclick="closeAddForm()" class="p-1 hover:bg-gray-700 rounded">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Name -->
+                <div class="mb-4">
+                    <label class="block text-sm font-medium mb-2">Name</label>
+                    <input type="text" id="form-name" class="w-full p-2 rounded bg-gray-700 border border-gray-600 focus:border-blue-500 focus:outline-none" placeholder="Enter name...">
+                </div>
+
+                <!-- Note -->
+                <div class="mb-4">
+                    <label class="block text-sm font-medium mb-2">Note (optional)</label>
+                    <textarea id="form-note" class="w-full p-2 rounded bg-gray-700 border border-gray-600 focus:border-blue-500 focus:outline-none" rows="2" placeholder="Add a note..."></textarea>
+                </div>
+
+                <!-- Habit-specific fields -->
+                <div id="habit-fields">
+                    <!-- Days -->
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium mb-2">Days</label>
+                        <div class="grid grid-cols-2 gap-2" id="days-checkboxes">
+                            <!-- Will be populated by JavaScript -->
+                        </div>
+                    </div>
+
+                    <!-- Time of Day -->
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium mb-2">Time of Day</label>
+                        <select id="form-time" class="w-full p-2 rounded bg-gray-700 border border-gray-600 focus:border-blue-500 focus:outline-none">
+                            <option value="1">Morning</option>
+                            <option value="2">Noon</option>
+                            <option value="3">Evening</option>
+                        </select>
+                    </div>
+
+                    <!-- Amount Based -->
+                    <div class="mb-4">
+                        <label class="flex items-center">
+                            <input type="checkbox" id="form-amount-based" class="mr-2">
+                            <span class="text-sm">Multiple times per day</span>
+                        </label>
+                    </div>
+
+                    <!-- Daily Target -->
+                    <div id="daily-target-field" class="mb-4 hidden">
+                        <label class="block text-sm font-medium mb-2">Times per day</label>
+                        <input type="number" id="form-daily-target" min="1" max="20" value="1" class="w-full p-2 rounded bg-gray-700 border border-gray-600 focus:border-blue-500 focus:outline-none">
+                    </div>
+                </div>
+
+                <!-- Task-specific fields -->
+                <div id="task-fields" class="hidden">
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium mb-2">Urgency</label>
+                        <select id="form-urgency" class="w-full p-2 rounded bg-gray-700 border border-gray-600 focus:border-blue-500 focus:outline-none">
+                            <option value="high">Today</option>
+                            <option value="medium">This Week</option>
+                            <option value="low">Someday</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Subtasks -->
+                <div class="mb-4">
+                    <label class="block text-sm font-medium mb-2">Subtasks</label>
+                    <div class="flex gap-2 mb-2">
+                        <input type="text" id="new-subtask" placeholder="Add subtask..." class="flex-1 p-2 rounded bg-gray-700 border border-gray-600 focus:border-blue-500 focus:outline-none">
+                        <button onclick="addSubtask()" class="px-3 py-2 bg-blue-600 hover:bg-blue-700 rounded">Add</button>
+                    </div>
+                    <div id="subtasks-list" class="space-y-1"></div>
+                </div>
+
+                <!-- Submit -->
+                <div class="flex gap-3">
+                    <button onclick="closeAddForm()" class="flex-1 py-2 px-4 bg-gray-600 hover:bg-gray-700 rounded font-medium">Cancel</button>
+                    <button onclick="submitForm()" id="submit-btn" class="flex-1 py-2 px-4 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed rounded font-medium">Add Habit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reset Confirmation Modal -->
+    <div id="reset-confirm-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-gray-800 rounded-lg max-w-sm w-full p-6">
+            <div class="text-center">
+                <div class="text-6xl mb-4">⚠️</div>
+                <h2 class="text-xl font-bold mb-2">Reset All Data?</h2>
+                <p class="text-gray-300 mb-6">This will permanently delete all your habits, tasks, and progress. This action cannot be undone.</p>
+                
+                <div class="flex gap-3">
+                    <button onclick="closeResetConfirm()" class="flex-1 py-2 px-4 bg-gray-600 hover:bg-gray-700 rounded font-medium">
+                        Cancel
+                    </button>
+                    <button onclick="resetAllData()" class="flex-1 py-2 px-4 bg-red-600 hover:bg-red-700 rounded font-medium">
+                        Delete Everything
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global state
+        let currentDate = new Date();
+        let viewingDate = new Date();
+        let habits = [];
+        let tasks = [];
+        let activeTab = 'habits';
+        let formSubtasks = [];
+
+        // Utility functions
+        const formatDate = (date) => {
+            return date.toISOString().split('T')[0];
+        };
+
+        const parseDate = (dateString) => {
+            return new Date(dateString + 'T00:00:00');
+        };
+
+        const getWeekday = (date) => {
+            return date.toLocaleDateString('en-US', { weekday: 'long' });
+        };
+
+        const addDays = (date, days) => {
+            const result = new Date(date);
+            result.setDate(result.getDate() + days);
+            return result;
+        };
+
+        const formatDisplayDate = (date) => {
+            const today = new Date();
+            const diffDays = Math.round((date - today) / (1000 * 60 * 60 * 24));
+
+            if (diffDays === 0) return 'Today';
+            if (diffDays === -1) return 'Yesterday';
+            if (diffDays === 1) return 'Tomorrow';
+
+            return date.toLocaleDateString('en-US', { 
+                weekday: 'long', 
+                month: 'short', 
+                day: 'numeric' 
+            });
+        };
+
+        const createHabit = (name, days, timeOfDay, options = {}) => ({
+            id: Date.now() + Math.random(),
+            name,
+            days,
+            timeOfDay,
+            isAmountBased: options.isAmountBased || false,
+            dailyTarget: options.dailyTarget || 1,
+            subtasks: options.subtasks || [],
+            note: options.note || '',
+            completions: {},
+            createdDate: formatDate(new Date())
         });
 
-        // Show/hide today button
-        const todayBtn = document.getElementById('today-btn');
-        if (formatDate(viewingDate) !== formatDate(new Date())) {
-            todayBtn.classList.remove('hidden');
-        } else {
-            todayBtn.classList.add('hidden');
-        }
+        const createTask = (name, urgency = 'medium', options = {}) => ({
+            id: Date.now() + Math.random(),
+            name,
+            urgency,
+            note: options.note || '',
+            subtasks: options.subtasks || [],
+            isCompleted: false,
+            createdDate: formatDate(new Date())
+        });
 
-        // Update progress
-        const rate = activeTab === 'habits' ? getCompletionRate() : getTaskCompletionRate();
-        document.getElementById('progress-percent').textContent = `${rate}%`;
-        document.getElementById('progress-bar').style.width = `${rate}%`;
+        const createSubtask = (name) => ({
+            id: Date.now() + Math.random(),
+            name,
+            isCompleted: false
+        });
 
-        // Render content
-        if (activeTab === 'habits') {
-            renderHabits();
-        } else {
-            renderTasks();
-        }
-    };
+        // Load data from localStorage
+        const loadData = () => {
+            const savedHabits = localStorage.getItem('habits');
+            const savedTasks = localStorage.getItem('tasks');
 
-    // Event listeners
-    document.getElementById('form-amount-based').addEventListener('change', function() {
-        const targetField = document.getElementById('daily-target-field');
-        if (this.checked) {
-            targetField.classList.remove('hidden');
-        } else {
-            targetField.classList.add('hidden');
-        }
-    });
+            if (savedHabits) {
+                habits = JSON.parse(savedHabits);
+            }
+            if (savedTasks) {
+                tasks = JSON.parse(savedTasks);
+            }
+        };
 
-    document.getElementById('new-subtask').addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            addSubtask();
-        }
-    });
+        // Save data to localStorage
+        const saveData = () => {
+            localStorage.setItem('habits', JSON.stringify(habits));
+            localStorage.setItem('tasks', JSON.stringify(tasks));
+        };
 
-    // Initialize app
-    loadData();
-    updateDisplay();
-</script>
-```
+        // Date navigation
+        const goToPreviousDay = () => {
+            viewingDate = addDays(viewingDate, -1);
+            updateDisplay();
+        };
 
-</body>
-</html>
+        const goToNextDay = () => {
+            viewingDate = addDays(viewingDate, 1);
+            updateDisplay();
+        };
 
-  <script>
-    
-  </script>
+        const goToToday = () => {
+            viewingDate = new Date();
+            updateDisplay();
+        };
+
+        // Tab management
+        const setActiveTab = (tab) => {
+            activeTab = tab;
+            
+            // Update tab styling
+            document.getElementById('habits-tab').className = `flex-1 py-3 px-4 text-center font-medium ${
+                tab === 'habits' ? 'bg-blue-600 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'
+            }`;
+            document.getElementById('tasks-tab').className = `flex-1 py-3 px-4 text-center font-medium ${
+                tab === 'tasks' ? 'bg-blue-600 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'
+            }`;
+
+            // Show/hide content
+            document.getElementById('habits-content').style.display = tab === 'habits' ? 'block' : 'none';
+            document.getElementById('tasks-content').style.display = tab === 'tasks' ? 'block' : 'none';
+
+            updateDisplay();
+        };
+
+        // Get today's habits
+        const getTodaysHabits = () => {
+            return habits.filter(habit => 
+                habit.days.includes(getWeekday(viewingDate))
+            );
+        };
+
+        // Check if habit is completed
+        const isHabitCompleted = (habit) => {
+            const dateKey = formatDate(viewingDate);
+            const completion = habit.completions[dateKey];
+
+            if (!completion) return false;
+            if (!completion.completed) return false;
+
+            if (habit.subtasks.length > 0) {
+                const allSubtasksComplete = habit.subtasks.every(subtask => {
+                    return completion.subtasks?.[subtask.id]?.[habit.timeOfDay] === true;
+                });
+                if (!allSubtasksComplete) return false;
+            }
+
+            if (habit.isAmountBased) {
+                return (completion.progress?.[habit.timeOfDay] || 0) >= habit.dailyTarget;
+            }
+
+            return true;
+        };
+
+        // Toggle habit completion
+        const toggleHabit = (habitId, timeOfDay = null) => {
+            const habit = habits.find(h => h.id === habitId);
+            if (!habit) return;
+
+            const dateKey = formatDate(viewingDate);
+            const currentCompletion = habit.completions[dateKey] || {
+                completed: false,
+                progress: {},
+                subtasks: {}
+            };
+
+            const targetTime = timeOfDay || habit.timeOfDay;
+
+            if (habit.isAmountBased) {
+                const currentProgress = currentCompletion.progress[targetTime] || 0;
+                const newProgress = currentProgress < habit.dailyTarget ? currentProgress + 1 : 0;
+
+                habit.completions[dateKey] = {
+                    ...currentCompletion,
+                    progress: { ...currentCompletion.progress, [targetTime]: newProgress },
+                    completed: newProgress >= habit.dailyTarget
+                };
+            } else {
+                habit.completions[dateKey] = {
+                    ...currentCompletion,
+                    completed: !currentCompletion.completed
+                };
+            }
+
+            saveData();
+            updateDisplay();
+        };
+
+        // Toggle subtask completion
+        const toggleSubtask = (habitId, subtaskId, timeOfDay = null) => {
+            const habit = habits.find(h => h.id === habitId);
+            if (!habit) return;
+
+            const dateKey = formatDate(viewingDate);
+            const currentCompletion = habit.completions[dateKey] || {
+                completed: false,
+                progress: {},
+                subtasks: {}
+            };
+
+            const targetTime = timeOfDay || habit.timeOfDay;
+
+            const newSubtasks = {
+                ...currentCompletion.subtasks,
+                [subtaskId]: {
+                    ...currentCompletion.subtasks[subtaskId],
+                    [targetTime]: !(currentCompletion.subtasks[subtaskId]?.[targetTime])
+                }
+            };
+
+            habit.completions[dateKey] = {
+                ...currentCompletion,
+                subtasks: newSubtasks
+            };
+
+            saveData();
+            updateDisplay();
+        };
+
+        // Toggle task completion
+        const toggleTask = (taskId) => {
+            const task = tasks.find(t => t.id === taskId);
+            if (!task) return;
+
+            task.isCompleted = !task.isCompleted;
+            saveData();
+            updateDisplay();
+        };
+
+        // Toggle task subtask
+        const toggleTaskSubtask = (taskId, subtaskId) => {
+            const task = tasks.find(t => t.id === taskId);
+            if (!task) return;
+
+            const subtask = task.subtasks.find(s => s.id === subtaskId);
+            if (!subtask) return;
+
+            subtask.isCompleted = !subtask.isCompleted;
+            saveData();
+            updateDisplay();
+        };
+
+        // Calculate streak
+        const calculateStreak = (habit) => {
+            let streak = 0;
+            let checkDate = new Date(viewingDate);
+
+            while (true) {
+                const weekday = getWeekday(checkDate);
+                if (habit.days.includes(weekday)) {
+                    const dateKey = formatDate(checkDate);
+                    const completion = habit.completions[dateKey];
+
+                    if (completion && completion.completed) {
+                        streak++;
+                        checkDate = addDays(checkDate, -1);
+                    } else {
+                        break;
+                    }
+                } else {
+                    checkDate = addDays(checkDate, -1);
+                }
+            }
+
+            return streak;
+        };
+
+        // Get completion rates
+        const getCompletionRate = () => {
+            const todaysHabits = getTodaysHabits();
+            if (todaysHabits.length === 0) return 0;
+            const completed = todaysHabits.filter(isHabitCompleted).length;
+            return Math.round((completed / todaysHabits.length) * 100);
+        };
+
+        const getTaskCompletionRate = () => {
+            if (tasks.length === 0) return 0;
+            const completed = tasks.filter(task => task.isCompleted).length;
+            return Math.round((completed / tasks.length) * 100);
+        };
+
+        // Render functions
+        const renderHabits = () => {
+            const todaysHabits = getTodaysHabits();
+            const habitsList = document.getElementById('habits-list');
+            const noHabits = document.getElementById('no-habits');
+
+            if (todaysHabits.length === 0) {
+                habitsList.innerHTML = '';
+                noHabits.classList.remove('hidden');
+                document.getElementById('no-habits-date').textContent = formatDisplayDate(viewingDate);
+            } else {
+                noHabits.classList.add('hidden');
+                habitsList.innerHTML = todaysHabits.map(habit => renderHabitCard(habit)).join('');
+            }
+
+            document.getElementById('habits-count').textContent = todaysHabits.length;
+        };
+
+        const renderHabitCard = (habit) => {
+            const isCompleted = isHabitCompleted(habit);
+            const streak = calculateStreak(habit);
+            const dateKey = formatDate(viewingDate);
+            const completion = habit.completions[dateKey] || { progress: {}, subtasks: {} };
+
+            const getTimeIcon = (timeOfDay) => {
+                switch(timeOfDay) {
+                    case 1: return '☀️';
+                    case 2: return '🕐';
+                    case 3: return '🌙';
+                    default: return '🕐';
+                }
+            };
+
+            const getTimeLabel = (timeOfDay) => {
+                switch(timeOfDay) {
+                    case 1: return 'Morning';
+                    case 2: return 'Noon';
+                    case 3: return 'Evening';
+                    default: return 'Anytime';
+                }
+            };
+
+            return `
+                <div class="p-4 rounded-lg border ${isCompleted ? 'bg-green-900 border-green-600' : 'bg-gray-800 border-gray-600'}">
+                    <div class="flex items-start justify-between mb-2">
+                        <div class="flex-1">
+                            <h3 class="font-semibold text-lg">${habit.name}</h3>
+                            ${habit.note ? `<p class="text-sm text-gray-400 mt-1">${habit.note}</p>` : ''}
+                        </div>
+                        ${streak > 0 ? `<div class="text-xs bg-orange-600 text-white px-2 py-1 rounded-full">🔥 ${streak}</div>` : ''}
+                    </div>
+
+                    <div class="flex items-center gap-4 mb-3 text-sm text-gray-300">
+                        <div class="flex items-center gap-2">
+                            <span>${getTimeIcon(habit.timeOfDay)}</span>
+                            <span>${getTimeLabel(habit.timeOfDay)}</span>
+                            ${habit.isAmountBased ? `<span>${habit.dailyTarget}x</span>` : ''}
+                        </div>
+                    </div>
+
+                    ${habit.isAmountBased ? `
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-sm">Progress</span>
+                            <div class="flex items-center gap-2">
+                                <span class="text-sm">${completion.progress[habit.timeOfDay] || 0}/${habit.dailyTarget}</span>
+                                <button onclick="toggleHabit(${habit.id})" class="w-8 h-8 rounded-full bg-blue-600 hover:bg-blue-700 flex items-center justify-center text-xs font-bold">+</button>
+                            </div>
+                        </div>
+                    ` : `
+                        <button onclick="toggleHabit(${habit.id})" class="w-full py-2 px-4 rounded-lg flex items-center justify-center gap-2 font-medium ${isCompleted ? 'bg-green-600 hover:bg-green-700' : 'bg-gray-700 hover:bg-gray-600'}">
+                            ${isCompleted ? '✓ Completed' : 'Mark Complete'}
+                        </button>
+                    `}
+
+                    ${habit.subtasks.length > 0 ? `
+                        <div class="mt-3 pt-3 border-t border-gray-600">
+                            <div class="text-xs text-gray-400 mb-2">Subtasks:</div>
+                            <div class="space-y-2">
+                                ${habit.subtasks.map(subtask => `
+                                    <div class="flex items-center gap-2">
+                                        <button onclick="toggleSubtask(${habit.id}, ${subtask.id}, ${habit.timeOfDay})" class="w-4 h-4 rounded border-2 flex items-center justify-center ${completion.subtasks[subtask.id]?.[habit.timeOfDay] ? 'bg-green-600 border-green-600' : 'border-gray-400'}">
+                                            ${completion.subtasks[subtask.id]?.[habit.timeOfDay] ? '✓' : ''}
+                                        </button>
+                                        <span class="text-sm ${completion.subtasks[subtask.id]?.[habit.timeOfDay] ? 'line-through text-gray-400' : ''}">${subtask.name}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+        };
+
+        const renderTasks = () => {
+            const tasksList = document.getElementById('tasks-list');
+            const noTasks = document.getElementById('no-tasks');
+
+            if (tasks.length === 0) {
+                tasksList.innerHTML = '';
+                noTasks.classList.remove('hidden');
+            } else {
+                noTasks.classList.add('hidden');
+                const sortedTasks = [...tasks].sort((a, b) => {
+                    if (a.isCompleted !== b.isCompleted) {
+                        return a.isCompleted ? 1 : -1;
+                    }
+                    const urgencyOrder = { high: 0, medium: 1, low: 2 };
+                    return urgencyOrder[a.urgency] - urgencyOrder[b.urgency];
+                });
+                tasksList.innerHTML = sortedTasks.map(task => renderTaskCard(task)).join('');
+            }
+
+            document.getElementById('tasks-count').textContent = tasks.length;
+        };
+
+        const renderTaskCard = (task) => {
+            const urgencyColors = {
+                high: 'border-red-500 bg-red-900',
+                medium: 'border-yellow-500 bg-yellow-900',
+                low: 'border-blue-500 bg-blue-900'
+            };
+
+            const urgencyLabels = {
+                high: 'Today',
+                medium: 'This Week',
+                low: 'Someday'
+            };
+
+            const completedSubtasks = task.subtasks.filter(s => s.isCompleted).length;
+            const totalSubtasks = task.subtasks.length;
+            const allSubtasksComplete = totalSubtasks === 0 || completedSubtasks === totalSubtasks;
+
+            return `
+                <div class="p-4 rounded-lg border ${task.isCompleted ? 'bg-green-900 border-green-600' : urgencyColors[task.urgency]}">
+                    <div class="flex items-start justify-between mb-2">
+                        <div class="flex-1">
+                            <h3 class="font-semibold text-lg">${task.name}</h3>
+                            ${task.note ? `<p class="text-sm text-gray-400 mt-1">${task.note}</p>` : ''}
+                        </div>
+                        <div class="text-xs bg-gray-600 text-white px-2 py-1 rounded-full">${urgencyLabels[task.urgency]}</div>
+                    </div>
+
+                    ${totalSubtasks > 0 ? `
+                        <div class="mb-3">
+                            <div class="text-xs text-gray-400 mb-2">Subtasks (${completedSubtasks}/${totalSubtasks}):</div>
+                            <div class="space-y-2">
+                                ${task.subtasks.map(subtask => `
+                                    <div class="flex items-center gap-2">
+                                        <button onclick="toggleTaskSubtask(${task.id}, ${subtask.id})" class="w-4 h-4 rounded border-2 flex items-center justify-center ${subtask.isCompleted ? 'bg-green-600 border-green-600' : 'border-gray-400'}">
+                                            ${subtask.isCompleted ? '✓' : ''}
+                                        </button>
+                                        <span class="text-sm ${subtask.isCompleted ? 'line-through text-gray-400' : ''}">${subtask.name}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    ` : ''}
+
+                    <!-- Task Completion Button -->
+                    <button onclick="toggleTask(${task.id})" ${!allSubtasksComplete && !task.isCompleted ? 'disabled' : ''} class="w-full py-2 px-4 rounded-lg flex items-center justify-center gap-2 font-medium ${
+                        task.isCompleted 
+                            ? 'bg-green-600 hover:bg-green-700' 
+                            : !allSubtasksComplete 
+                                ? 'bg-gray-600 cursor-not-allowed' 
+                                : 'bg-blue-600 hover:bg-blue-700'
+                    }">
+                        ${task.isCompleted 
+                            ? '✓ Task Completed' 
+                            : !allSubtasksComplete 
+                                ? `Complete All Subtasks First (${completedSubtasks}/${totalSubtasks})` 
+                                : 'Mark Task Complete'
+                        }
+                    </button>
+                </div>
+            `;
+        };
+
+        // Form management
+        const showAddForm = () => {
+            document.getElementById('add-form-modal').classList.remove('hidden');
+            document.getElementById('form-title').textContent = `Add ${activeTab === 'habits' ? 'Habit' : 'Task'}`;
+            document.getElementById('submit-btn').textContent = `Add ${activeTab === 'habits' ? 'Habit' : 'Task'}`;
+            
+            if (activeTab === 'habits') {
+                document.getElementById('habit-fields').style.display = 'block';
+                document.getElementById('task-fields').style.display = 'none';
+            } else {
+                document.getElementById('habit-fields').style.display = 'none';
+                document.getElementById('task-fields').style.display = 'block';
+            }
+
+            // Initialize days checkboxes
+            const daysContainer = document.getElementById('days-checkboxes');
+            const weekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            daysContainer.innerHTML = weekdays.map(day => `
+                <label class="flex items-center">
+                    <input type="checkbox" class="mr-2" data-day="${day}">
+                    <span class="text-sm">${day}</span>
+                </label>
+            `).join('');
+
+            // Reset form
+            resetForm();
+        };
+
+        const closeAddForm = () => {
+            document.getElementById('add-form-modal').classList.add('hidden');
+            resetForm();
+        };
+
+        const resetForm = () => {
+            document.getElementById('form-name').value = '';
+            document.getElementById('form-note').value = '';
+            document.getElementById('form-time').value = '1';
+            document.getElementById('form-amount-based').checked = false;
+            document.getElementById('form-daily-target').value = '1';
+            document.getElementById('form-urgency').value = 'medium';
+            document.getElementById('new-subtask').value = '';
+            document.getElementById('daily-target-field').classList.add('hidden');
+            
+            // Clear day checkboxes
+            document.querySelectorAll('#days-checkboxes input[type="checkbox"]').forEach(cb => cb.checked = false);
+            
+            formSubtasks = [];
+            renderFormSubtasks();
+        };
+
+        const addSubtask = () => {
+            const input = document.getElementById('new-subtask');
+            const name = input.value.trim();
+            if (name) {
+                formSubtasks.push(createSubtask(name));
+                input.value = '';
+                renderFormSubtasks();
+            }
+        };
+
+        const removeFormSubtask = (index) => {
+            formSubtasks.splice(index, 1);
+            renderFormSubtasks();
+        };
+
+        const renderFormSubtasks = () => {
+            const container = document.getElementById('subtasks-list');
+            container.innerHTML = formSubtasks.map((subtask, index) => `
+                <div class="flex items-center justify-between bg-gray-700 p-2 rounded">
+                    <span class="text-sm">${subtask.name}</span>
+                    <button onclick="removeFormSubtask(${index})" class="text-red-400 hover:text-red-300">✕</button>
+                </div>
+            `).join('');
+        };
+
+        const submitForm = () => {
+            const name = document.getElementById('form-name').value.trim();
+            if (!name) return;
+
+            if (activeTab === 'habits') {
+                const selectedDays = Array.from(document.querySelectorAll('#days-checkboxes input[type="checkbox"]:checked')).map(cb => cb.dataset.day);
+                if (selectedDays.length === 0) return;
+
+                const habit = createHabit(
+                    name,
+                    selectedDays,
+                    parseInt(document.getElementById('form-time').value),
+                    {
+                        isAmountBased: document.getElementById('form-amount-based').checked,
+                        dailyTarget: parseInt(document.getElementById('form-daily-target').value),
+                        subtasks: [...formSubtasks],
+                        note: document.getElementById('form-note').value.trim()
+                    }
+                );
+                habits.push(habit);
+            } else {
+                const task = createTask(
+                    name,
+                    document.getElementById('form-urgency').value,
+                    {
+                        note: document.getElementById('form-note').value.trim(),
+                        subtasks: [...formSubtasks]
+                    }
+                );
+                tasks.push(task);
+            }
+
+            saveData();
+            closeAddForm();
+            updateDisplay();
+        };
+
+        // Reset functionality
+        const showResetConfirm = () => {
+            document.getElementById('reset-confirm-modal').classList.remove('hidden');
+        };
+
+        const closeResetConfirm = () => {
+            document.getElementById('reset-confirm-modal').classList.add('hidden');
+        };
+
+        const resetAllData = () => {
+            // Clear all data
+            habits = [];
+            tasks = [];
+            
+            // Clear localStorage
+            localStorage.removeItem('habits');
+            localStorage.removeItem('tasks');
+            
+            // Close modal and update display
+            closeResetConfirm();
+            updateDisplay();
+            
+            // Show confirmation
+            alert('✅ All data has been cleared!');
+        };
+
+        // Main update function
+        const updateDisplay = () => {
+            // Update date display
+            document.getElementById('current-date').textContent = formatDisplayDate(viewingDate);
+            document.getElementById('current-full-date').textContent = viewingDate.toLocaleDateString('en-US', { 
+                month: 'long', 
+                day: 'numeric', 
+                year: 'numeric' 
+            });
+
+            // Show/hide today button
+            const todayBtn = document.getElementById('today-btn');
+            if (formatDate(viewingDate) !== formatDate(new Date())) {
+                todayBtn.classList.remove('hidden');
+            } else {
+                todayBtn.classList.add('hidden');
+            }
+
+            // Update progress
+            const rate = activeTab === 'habits' ? getCompletionRate() : getTaskCompletionRate();
+            document.getElementById('progress-percent').textContent = `${rate}%`;
+            document.getElementById('progress-bar').style.width = `${rate}%`;
+
+            // Render content
+            if (activeTab === 'habits') {
+                renderHabits();
+            } else {
+                renderTasks();
+            }
+        };
+
+        // Event listeners
+        document.getElementById('form-amount-based').addEventListener('change', function() {
+            const targetField = document.getElementById('daily-target-field');
+            if (this.checked) {
+                targetField.classList.remove('hidden');
+            } else {
+                targetField.classList.add('hidden');
+            }
+        });
+
+        document.getElementById('new-subtask').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                addSubtask();
+            }
+        });
+
+        // Initialize app
+        loadData();
+        updateDisplay();
+    </script>
 </body>
 </html>
