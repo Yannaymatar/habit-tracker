@@ -969,17 +969,17 @@
             document.getElementById('form-title').textContent = activeTab === 'habits' ? 'Add Habit' : 'Add Task';
             document.getElementById('submit-btn').textContent = activeTab === 'habits' ? 'Add Habit' : 'Add Task';
             
+            // Reset form FIRST
+            resetForm();
+            
             if (activeTab === 'habits') {
                 document.getElementById('habit-fields').style.display = 'block';
                 document.getElementById('task-fields').style.display = 'none';
                 initializeDaysCheckboxes();
-                updateTimeAmounts();
             } else {
                 document.getElementById('habit-fields').style.display = 'none';
                 document.getElementById('task-fields').style.display = 'block';
             }
-
-            resetForm();
         };
 
         const closeAddForm = () => {
@@ -993,6 +993,24 @@
             document.getElementById('new-subtask').value = '';
             formSubtasks = [];
             renderFormSubtasks();
+            
+            // Reset all checkboxes and their visual states
+            document.querySelectorAll('.day-checkbox').forEach(cb => {
+                cb.checked = false;
+                const label = cb.closest('label');
+                label.classList.remove('bg-purple-600', 'ring-2', 'ring-purple-400');
+                label.classList.add('bg-gray-700');
+            });
+            
+            document.querySelectorAll('.time-checkbox').forEach(cb => {
+                cb.checked = false;
+                const label = cb.closest('label');
+                label.classList.remove('bg-purple-600', 'ring-2', 'ring-purple-400');
+                label.classList.add('bg-gray-700');
+            });
+            
+            // Clear time amounts
+            document.getElementById('time-amounts').innerHTML = '<div class="text-gray-400 text-center py-4">Select at least one time period above</div>';
         };
 
         const initializeDaysCheckboxes = () => {
@@ -1057,17 +1075,21 @@
             if (e.target.classList.contains('time-checkbox')) {
                 const label = e.target.closest('label');
                 if (e.target.checked) {
-                    label.classList.add('bg-purple-600');
+                    label.classList.remove('bg-gray-700');
+                    label.classList.add('bg-purple-600', 'ring-2', 'ring-purple-400');
                 } else {
-                    label.classList.remove('bg-purple-600');
+                    label.classList.remove('bg-purple-600', 'ring-2', 'ring-purple-400');
+                    label.classList.add('bg-gray-700');
                 }
                 updateTimeAmounts();
             } else if (e.target.classList.contains('day-checkbox')) {
                 const label = e.target.closest('label');
                 if (e.target.checked) {
-                    label.classList.add('bg-purple-600');
+                    label.classList.remove('bg-gray-700');
+                    label.classList.add('bg-purple-600', 'ring-2', 'ring-purple-400');
                 } else {
-                    label.classList.remove('bg-purple-600');
+                    label.classList.remove('bg-purple-600', 'ring-2', 'ring-purple-400');
+                    label.classList.add('bg-gray-700');
                 }
             }
         });
@@ -1103,13 +1125,29 @@
 
         const submitForm = () => {
             const name = document.getElementById('form-name').value.trim();
-            if (!name) return;
+            console.log('Submit form called, name:', name);
+            
+            if (!name) {
+                alert('Please enter a name');
+                return;
+            }
 
             if (activeTab === 'habits') {
                 const selectedDays = Array.from(document.querySelectorAll('.day-checkbox:checked')).map(cb => cb.dataset.day);
                 const selectedTimes = Array.from(document.querySelectorAll('.time-checkbox:checked')).map(cb => parseInt(cb.dataset.time));
                 
-                if (selectedDays.length === 0 || selectedTimes.length === 0) return;
+                console.log('Selected days:', selectedDays);
+                console.log('Selected times:', selectedTimes);
+                
+                if (selectedDays.length === 0) {
+                    alert('Please select at least one day');
+                    return;
+                }
+                
+                if (selectedTimes.length === 0) {
+                    alert('Please select at least one time period');
+                    return;
+                }
 
                 const amounts = {};
                 selectedTimes.forEach(time => {
@@ -1117,12 +1155,16 @@
                     amounts[time] = amountEl ? parseInt(amountEl.textContent) : 1;
                 });
 
+                console.log('Amounts:', amounts);
+
                 const habit = new Habit(name, selectedDays, selectedTimes, amounts, {
                     subtasks: [...formSubtasks],
                     note: document.getElementById('form-note').value.trim()
                 });
                 
+                console.log('Created habit:', habit);
                 habits.push(habit);
+                console.log('Total habits now:', habits.length);
             } else {
                 const task = new Task(
                     name,
@@ -1132,7 +1174,9 @@
                         subtasks: [...formSubtasks]
                     }
                 );
+                console.log('Created task:', task);
                 tasks.push(task);
+                console.log('Total tasks now:', tasks.length);
             }
 
             saveData();
