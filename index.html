@@ -969,72 +969,25 @@
             document.getElementById('form-title').textContent = activeTab === 'habits' ? 'Add Habit' : 'Add Task';
             document.getElementById('submit-btn').textContent = activeTab === 'habits' ? 'Add Habit' : 'Add Task';
             
-            if (activeTab === 'habits') {
-                document.getElementById('habit-fields').style.display = 'block';
-                document.getElementById('task-fields').style.display = 'none';
-                initializeDaysCheckboxes(); // Create checkboxes FIRST
-                resetForm(); // Then reset them
-            } else {
-                document.getElementById('habit-fields').style.display = 'none';
-                document.getElementById('task-fields').style.display = 'block';
-                resetForm();
-            }
-        };
-
-        const closeAddForm = () => {
-            document.getElementById('add-form-modal').classList.add('hidden');
-            resetForm();
-        };
-
-        const resetForm = () => {
-            // Reset basic form fields
+            // Clear form first
             document.getElementById('form-name').value = '';
             document.getElementById('form-note').value = '';
             document.getElementById('new-subtask').value = '';
             formSubtasks = [];
             renderFormSubtasks();
             
-            // Reset day checkboxes (only if they exist)
-            const dayCheckboxes = document.querySelectorAll('.day-checkbox');
-            dayCheckboxes.forEach(cb => {
-                cb.checked = false;
-                const label = cb.closest('label');
-                label.classList.remove('bg-purple-600', 'ring-2', 'ring-purple-400');
-                label.classList.add('bg-gray-700');
-            });
-            
-            // Reset time checkboxes
-            document.querySelectorAll('.time-checkbox').forEach(cb => {
-                cb.checked = false;
-                const label = cb.closest('label');
-                label.classList.remove('bg-purple-600', 'ring-2', 'ring-purple-400');
-                label.classList.add('bg-gray-700');
-            });
-            
-            // Clear time amounts
-            document.getElementById('time-amounts').innerHTML = '<div class="text-gray-400 text-center py-4">Select at least one time period above</div>';
-        };
-
-        const initializeDaysCheckboxes = () => {
-            const container = document.getElementById('days-checkboxes');
-            const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-            const fullDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-            
-            container.innerHTML = weekdays.map((day, index) => `
-                <label class="flex flex-col items-center p-2 rounded-lg bg-gray-700 cursor-pointer hover:bg-gray-600 transition-all">
-                    <input type="checkbox" class="hidden day-checkbox" data-day="${fullDays[index]}">
-                    <div class="text-xs font-bold">${day}</div>
-                </label>
-            `).join('');
-
-            // Add event listeners to new checkboxes
-            document.querySelectorAll('.day-checkbox').forEach(cb => {
-                cb.addEventListener('change', updateTimeAmounts);
-            });
+            if (activeTab === 'habits') {
+                document.getElementById('habit-fields').style.display = 'block';
+                document.getElementById('task-fields').style.display = 'none';
+                initializeDaysCheckboxes();
+                resetTimeAmounts();
+            } else {
+                document.getElementById('habit-fields').style.display = 'none';
+                document.getElementById('task-fields').style.display = 'block';
+            }
         };
 
         const updateTimeAmounts = () => {
-            const selectedTimes = Array.from(document.querySelectorAll('.time-checkbox:checked')).map(cb => parseInt(cb.dataset.time));
             const container = document.getElementById('time-amounts');
             
             if (selectedTimes.length === 0) {
@@ -1063,6 +1016,101 @@
                     </div>
                 </div>
             `).join('');
+        };
+
+        // Form handling - SIMPLIFIED VERSION
+        const showAddForm = () => {
+            // Reset selection arrays
+            selectedDays = [];
+            selectedTimes = [];
+            
+            document.getElementById('add-form-modal').classList.remove('hidden');
+            document.getElementById('form-title').textContent = activeTab === 'habits' ? 'Add Habit' : 'Add Task';
+            document.getElementById('submit-btn').textContent = activeTab === 'habits' ? 'Add Habit' : 'Add Task';
+            
+            // Clear form
+            document.getElementById('form-name').value = '';
+            document.getElementById('form-note').value = '';
+            document.getElementById('new-subtask').value = '';
+            formSubtasks = [];
+            renderFormSubtasks();
+            
+            if (activeTab === 'habits') {
+                document.getElementById('habit-fields').style.display = 'block';
+                document.getElementById('task-fields').style.display = 'none';
+                initializeDaysCheckboxes();
+                updateTimeAmounts();
+            } else {
+                document.getElementById('habit-fields').style.display = 'none';
+                document.getElementById('task-fields').style.display = 'block';
+            }
+        };
+
+        const resetTimeAmounts = () => {
+            selectedTimes = [];
+            // Reset time checkboxes visual state
+            document.querySelectorAll('.time-checkbox').forEach(cb => {
+                cb.checked = false;
+                const label = cb.closest('label');
+                label.classList.remove('bg-purple-600', 'ring-2', 'ring-purple-400');
+                label.classList.add('bg-gray-700');
+            });
+            updateTimeAmounts();
+        };
+
+        const closeAddForm = () => {
+            document.getElementById('add-form-modal').classList.add('hidden');
+        };
+
+        const initializeDaysCheckboxes = () => {
+            const container = document.getElementById('days-checkboxes');
+            const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            const fullDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            
+            container.innerHTML = weekdays.map((day, index) => `
+                <label class="day-label flex flex-col items-center p-2 rounded-lg bg-gray-700 cursor-pointer hover:bg-gray-600 transition-all" onclick="toggleDay('${fullDays[index]}', this)">
+                    <input type="checkbox" class="hidden day-checkbox" data-day="${fullDays[index]}">
+                    <div class="text-xs font-bold">${day}</div>
+                </label>
+            `).join('');
+        };
+
+        // Simplified form handling functions
+        let selectedDays = [];
+        let selectedTimes = [];
+        
+        const toggleDay = (day, labelElement) => {
+            const checkbox = labelElement.querySelector('.day-checkbox');
+            checkbox.checked = !checkbox.checked;
+            
+            if (checkbox.checked) {
+                selectedDays.push(day);
+                labelElement.classList.remove('bg-gray-700');
+                labelElement.classList.add('bg-purple-600', 'ring-2', 'ring-purple-400');
+            } else {
+                selectedDays = selectedDays.filter(d => d !== day);
+                labelElement.classList.remove('bg-purple-600', 'ring-2', 'ring-purple-400');
+                labelElement.classList.add('bg-gray-700');
+            }
+        };
+        
+        const toggleTime = (time, labelElement) => {
+            const checkbox = labelElement.querySelector('.time-checkbox');
+            checkbox.checked = !checkbox.checked;
+            
+            if (checkbox.checked) {
+                if (!selectedTimes.includes(time)) {
+                    selectedTimes.push(time);
+                }
+                labelElement.classList.remove('bg-gray-700');
+                labelElement.classList.add('bg-purple-600', 'ring-2', 'ring-purple-400');
+            } else {
+                selectedTimes = selectedTimes.filter(t => t !== time);
+                labelElement.classList.remove('bg-purple-600', 'ring-2', 'ring-purple-400');
+                labelElement.classList.add('bg-gray-700');
+            }
+            
+            updateTimeAmounts();
         };
 
         const changeAmount = (time, delta) => {
@@ -1135,57 +1183,52 @@
                 return;
             }
 
-            try {
-                if (activeTab === 'habits') {
-                    const selectedDays = Array.from(document.querySelectorAll('.day-checkbox:checked')).map(cb => cb.dataset.day);
-                    const selectedTimes = Array.from(document.querySelectorAll('.time-checkbox:checked')).map(cb => parseInt(cb.dataset.time));
-                    
-                    if (selectedDays.length === 0) {
-                        alert('Please select at least one day');
-                        return;
-                    }
-                    
-                    if (selectedTimes.length === 0) {
-                        alert('Please select at least one time period');
-                        return;
-                    }
-
-                    const amounts = {};
-                    selectedTimes.forEach(time => {
-                        const amountEl = document.getElementById(`amount-${time}`);
-                        amounts[time] = amountEl ? parseInt(amountEl.textContent) : 1;
-                    });
-
-                    const habit = new Habit(name, selectedDays, selectedTimes, amounts, {
-                        subtasks: [...formSubtasks],
-                        note: document.getElementById('form-note').value.trim()
-                    });
-                    
-                    habits.push(habit);
-                } else {
-                    const task = new Task(
-                        name,
-                        document.getElementById('form-urgency').value,
-                        {
-                            note: document.getElementById('form-note').value.trim(),
-                            subtasks: [...formSubtasks]
-                        }
-                    );
-                    tasks.push(task);
+            if (activeTab === 'habits') {
+                if (selectedDays.length === 0) {
+                    alert('Please select at least one day');
+                    return;
+                }
+                
+                if (selectedTimes.length === 0) {
+                    alert('Please select at least one time period');
+                    return;
                 }
 
-                saveData();
-                closeAddForm();
-                updateDisplay();
+                // Build amounts object
+                const amounts = {};
+                selectedTimes.forEach(time => {
+                    const amountEl = document.getElementById(`amount-${time}`);
+                    amounts[time] = amountEl ? parseInt(amountEl.textContent) : 1;
+                });
+
+                // Create new habit
+                const habit = new Habit(name, selectedDays, selectedTimes, amounts, {
+                    subtasks: [...formSubtasks],
+                    note: document.getElementById('form-note').value.trim()
+                });
                 
-                // Show success message
-                const message = activeTab === 'habits' ? 'Habit added successfully!' : 'Task added successfully!';
-                // You could add a toast notification here if desired
+                habits.push(habit);
                 
-            } catch (error) {
-                console.error('Error submitting form:', error);
-                alert('An error occurred. Please try again.');
+            } else {
+                // Create new task
+                const urgencySelect = document.getElementById('form-urgency');
+                const task = new Task(
+                    name,
+                    urgencySelect ? urgencySelect.value : 'medium',
+                    {
+                        note: document.getElementById('form-note').value.trim(),
+                        subtasks: [...formSubtasks]
+                    }
+                );
+                tasks.push(task);
             }
+
+            saveData();
+            closeAddForm();
+            updateDisplay();
+            
+            // Simple success feedback
+            alert(activeTab === 'habits' ? 'Habit added!' : 'Task added!');
         };
 
         // Main update function
