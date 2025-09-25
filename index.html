@@ -963,22 +963,21 @@
             return stats;
         };
 
-        // Form handling
+        // Form handling - FIXED VERSION
         const showAddForm = () => {
             document.getElementById('add-form-modal').classList.remove('hidden');
             document.getElementById('form-title').textContent = activeTab === 'habits' ? 'Add Habit' : 'Add Task';
             document.getElementById('submit-btn').textContent = activeTab === 'habits' ? 'Add Habit' : 'Add Task';
             
-            // Reset form FIRST
-            resetForm();
-            
             if (activeTab === 'habits') {
                 document.getElementById('habit-fields').style.display = 'block';
                 document.getElementById('task-fields').style.display = 'none';
-                initializeDaysCheckboxes();
+                initializeDaysCheckboxes(); // Create checkboxes FIRST
+                resetForm(); // Then reset them
             } else {
                 document.getElementById('habit-fields').style.display = 'none';
                 document.getElementById('task-fields').style.display = 'block';
+                resetForm();
             }
         };
 
@@ -988,20 +987,23 @@
         };
 
         const resetForm = () => {
+            // Reset basic form fields
             document.getElementById('form-name').value = '';
             document.getElementById('form-note').value = '';
             document.getElementById('new-subtask').value = '';
             formSubtasks = [];
             renderFormSubtasks();
             
-            // Reset all checkboxes and their visual states
-            document.querySelectorAll('.day-checkbox').forEach(cb => {
+            // Reset day checkboxes (only if they exist)
+            const dayCheckboxes = document.querySelectorAll('.day-checkbox');
+            dayCheckboxes.forEach(cb => {
                 cb.checked = false;
                 const label = cb.closest('label');
                 label.classList.remove('bg-purple-600', 'ring-2', 'ring-purple-400');
                 label.classList.add('bg-gray-700');
             });
             
+            // Reset time checkboxes
             document.querySelectorAll('.time-checkbox').forEach(cb => {
                 cb.checked = false;
                 const label = cb.closest('label');
@@ -1025,7 +1027,7 @@
                 </label>
             `).join('');
 
-            // Add event listeners
+            // Add event listeners to new checkboxes
             document.querySelectorAll('.day-checkbox').forEach(cb => {
                 cb.addEventListener('change', updateTimeAmounts);
             });
@@ -1065,6 +1067,7 @@
 
         const changeAmount = (time, delta) => {
             const element = document.getElementById(`amount-${time}`);
+            if (!element) return; // Safety check
             const current = parseInt(element.textContent);
             const newAmount = Math.max(1, Math.min(20, current + delta));
             element.textContent = newAmount;
@@ -1115,6 +1118,7 @@
 
         const renderFormSubtasks = () => {
             const container = document.getElementById('subtasks-list');
+            if (!container) return; // Safety check
             container.innerHTML = formSubtasks.map((subtask, index) => `
                 <div class="flex items-center justify-between p-2 bg-gray-700 rounded-lg">
                     <span class="text-sm">${subtask.name}</span>
@@ -1125,63 +1129,63 @@
 
         const submitForm = () => {
             const name = document.getElementById('form-name').value.trim();
-            console.log('Submit form called, name:', name);
             
             if (!name) {
                 alert('Please enter a name');
                 return;
             }
 
-            if (activeTab === 'habits') {
-                const selectedDays = Array.from(document.querySelectorAll('.day-checkbox:checked')).map(cb => cb.dataset.day);
-                const selectedTimes = Array.from(document.querySelectorAll('.time-checkbox:checked')).map(cb => parseInt(cb.dataset.time));
-                
-                console.log('Selected days:', selectedDays);
-                console.log('Selected times:', selectedTimes);
-                
-                if (selectedDays.length === 0) {
-                    alert('Please select at least one day');
-                    return;
-                }
-                
-                if (selectedTimes.length === 0) {
-                    alert('Please select at least one time period');
-                    return;
-                }
-
-                const amounts = {};
-                selectedTimes.forEach(time => {
-                    const amountEl = document.getElementById(`amount-${time}`);
-                    amounts[time] = amountEl ? parseInt(amountEl.textContent) : 1;
-                });
-
-                console.log('Amounts:', amounts);
-
-                const habit = new Habit(name, selectedDays, selectedTimes, amounts, {
-                    subtasks: [...formSubtasks],
-                    note: document.getElementById('form-note').value.trim()
-                });
-                
-                console.log('Created habit:', habit);
-                habits.push(habit);
-                console.log('Total habits now:', habits.length);
-            } else {
-                const task = new Task(
-                    name,
-                    document.getElementById('form-urgency').value,
-                    {
-                        note: document.getElementById('form-note').value.trim(),
-                        subtasks: [...formSubtasks]
+            try {
+                if (activeTab === 'habits') {
+                    const selectedDays = Array.from(document.querySelectorAll('.day-checkbox:checked')).map(cb => cb.dataset.day);
+                    const selectedTimes = Array.from(document.querySelectorAll('.time-checkbox:checked')).map(cb => parseInt(cb.dataset.time));
+                    
+                    if (selectedDays.length === 0) {
+                        alert('Please select at least one day');
+                        return;
                     }
-                );
-                console.log('Created task:', task);
-                tasks.push(task);
-                console.log('Total tasks now:', tasks.length);
-            }
+                    
+                    if (selectedTimes.length === 0) {
+                        alert('Please select at least one time period');
+                        return;
+                    }
 
-            saveData();
-            closeAddForm();
-            updateDisplay();
+                    const amounts = {};
+                    selectedTimes.forEach(time => {
+                        const amountEl = document.getElementById(`amount-${time}`);
+                        amounts[time] = amountEl ? parseInt(amountEl.textContent) : 1;
+                    });
+
+                    const habit = new Habit(name, selectedDays, selectedTimes, amounts, {
+                        subtasks: [...formSubtasks],
+                        note: document.getElementById('form-note').value.trim()
+                    });
+                    
+                    habits.push(habit);
+                } else {
+                    const task = new Task(
+                        name,
+                        document.getElementById('form-urgency').value,
+                        {
+                            note: document.getElementById('form-note').value.trim(),
+                            subtasks: [...formSubtasks]
+                        }
+                    );
+                    tasks.push(task);
+                }
+
+                saveData();
+                closeAddForm();
+                updateDisplay();
+                
+                // Show success message
+                const message = activeTab === 'habits' ? 'Habit added successfully!' : 'Task added successfully!';
+                // You could add a toast notification here if desired
+                
+            } catch (error) {
+                console.error('Error submitting form:', error);
+                alert('An error occurred. Please try again.');
+            }
         };
 
         // Main update function
